@@ -25,12 +25,12 @@ sudo apt install python3-pip python3-rpi.gpio python3-lgpio python3-virtualenv p
 Create the virtualenv
 
 ```sh
-virtualenv --system-site-packages pinsource
+virtualenv --system-site-packages venv
 ```
 
 Activate the virtualenv
 ```sh
-source pinsource/bin/activate
+source venv/bin/activate
 ```
 
 ```sh
