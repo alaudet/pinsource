@@ -1,4 +1,4 @@
-from hcsr04sensor import sensor
+from pinsource import usoniclegacy
 import argparse
 
 
@@ -68,7 +68,7 @@ def main():
     print(f"speed = {speed}")
     print(f"samples = {samples}")
     print("")
-    value = sensor.Measurement(trig, echo)
+    value = usoniclegacy.Measurement(trig, echo)
     raw_distance = value.raw_distance(sample_size=samples, sample_wait=speed)
     imperial_distance = value.distance(raw_distance) * 0.394
     metric_distance = value.distance(raw_distance)
