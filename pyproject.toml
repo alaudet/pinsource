@@ -30,6 +30,7 @@ Download = "https://github.com/alaudet/pinsource/releases"
 
 [project.scripts]
 pinsource = "pinsource.pinsource:main"
+pi5test = "pinsource.pi5test:main"
 
 [tool.setuptools.packages.find]
 include = ["pinsource*"]

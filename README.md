@@ -56,6 +56,11 @@ See `pinsource --help` for usage.
 Still uses Rpi.GPIO and not lgpio which will be added later.
 
 If anyone makes it work on Raspberry Pi 5 please let me know.
+To test if the code works on pi5 try;
+
+```sh
+pi5test
+```
 
 
 ----------------------------
