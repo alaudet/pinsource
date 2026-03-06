@@ -1,0 +1,35 @@
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "pinsource"
+version = "0.0.1alpha"
+description = "Module for accessing gpio pins on arm boards like Raspberry Pi"
+readme = "README.md"
+license = "Apache-2.0"
+authors = [
+    { name = "Al Audet", email = "alaudet@linuxnorth.org" }
+]
+requires-python = ">=3.9"
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "Environment :: Console",
+    "Intended Audience :: End Users/Desktop",
+    "Natural Language :: English",
+    "Operating System :: POSIX :: Linux",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.13",
+    "Topic :: Home Automation",
+]
+
+[project.urls]
+Homepage = "https://github.com/alaudet/pinsource"
+Download = "https://github.com/alaudet/pinsource/releases"
+
+[project.scripts]
+pinsource = "pinsource.pinsource:main"
+
+[tool.setuptools.packages.find]
+include = ["pinsource*"]
