@@ -13,7 +13,7 @@ Coming Soon!
 
 ## WARNING - I HAVEN'T TESTED THIS CODE YET! USE AT YOUR OWN RISK!
 
-This is alpha code only ported from hcsr04sensor.  It wont work.
+This is alpha code only ported from hcsr04sensor.  It may not work.  It may fry your board and burn down your house.   Please use at your own risk!
 
 
 Install the dependencies
@@ -53,9 +53,6 @@ The cli version `pinsource` is worth a look for now.
 
 See `pinsource --help` for usage.  
 
-Still uses Rpi.GPIO and not lgpio which will be added later.
-
-If anyone makes it work on Raspberry Pi 5 please let me know.
 To test if the code works on pi5 try;
 
 ```sh
