@@ -1,6 +1,8 @@
 # project added
-pinsource/lgpioconcept.py
 todo
+
+# lgpio daemon notification pipes (runtime, created by lgpiod)
+.lgd-nfy*
 
 # Claude Code
 .claude/

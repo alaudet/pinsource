@@ -34,3 +34,6 @@ pi5test = "pinsource.pi5test:main"
 
 [tool.setuptools.packages.find]
 include = ["pinsource*"]
+
+[tool.pytest.ini_options]
+python_files = ["tests_*.py"]
