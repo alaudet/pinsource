@@ -1,8 +1,8 @@
-from pinsource import usonic
+from pinsource import usoniclegacy
 import argparse
 
 
-def get_args() -> tuple[int, int, float, int]:
+def get_args():
     """Parse command line arguments."""
 
     parser = argparse.ArgumentParser(
@@ -58,7 +58,7 @@ def get_args() -> tuple[int, int, float, int]:
     return trig, echo, speed, samples
 
 
-def main() -> None:
+def main():
     """Main function to run the sensor with passed arguments"""
 
     trig, echo, speed, samples = get_args()
@@ -68,10 +68,10 @@ def main() -> None:
     print(f"speed = {speed}")
     print(f"samples = {samples}")
     print("")
-    value = usonic.Measurement(trig, echo)
+    value = usoniclegacy.Measurement(trig, echo)
     raw_distance = value.raw_distance(sample_size=samples, sample_wait=speed)
-    imperial_distance = raw_distance * 0.394
-    metric_distance = raw_distance
+    imperial_distance = value.distance(raw_distance) * 0.394
+    metric_distance = value.distance(raw_distance)
     print(f"The imperial distance is {round(imperial_distance, 1)} inches.")
     print(f"The metric distance is {round(metric_distance, 1)} centimetres.")
 
