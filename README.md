@@ -20,6 +20,11 @@ This version also changes from the MIT License to the Apache 2.0 License.
 
 This is alpha code.  It may not work. While it mostly works on my setup, your mileage may vary.
 
+## Use of AI in code
+
+Claude Code was used to help migrate legacy code from hcsr04sensor to pinsource.
+
+I use AI to help in tasks that I am comfortable doing but saves time.  All code is reviewed by me and accepted by me before publishing.  I will never publish anything I didn't ask for specifically and which I haven't reviewed personally.
 
 Install the dependencies
 
