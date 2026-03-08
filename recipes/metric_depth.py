@@ -1,7 +1,7 @@
 from pinsource import usonic
 
 # Created by Al Audet
-# MIT License
+# Apache 2.0 License
 
 
 def main():

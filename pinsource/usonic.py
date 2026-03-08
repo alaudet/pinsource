@@ -2,7 +2,7 @@
 sensor and a Raspberry Pi.  Imperial and Metric measurements are available"""
 
 # Al Audet
-# MIT License
+# Apache 2.0 License
 import time
 import math
 import lgpio
