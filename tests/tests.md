@@ -2,31 +2,29 @@
 
 ## The problem
 
-`usonic.py` and `usoniclegacy.py` both import hardware libraries (`lgpio` and
-`RPi.GPIO`) at module load time. On a dev machine neither library is installed,
-so any attempt to `import pinsource.usonic` immediately raises
+`usonic.py` imports `lgpio` at module load time. On a dev machine this library
+is not installed, so any attempt to `import pinsource.usonic` immediately raises
 `ModuleNotFoundError`, and pytest cannot even collect the test files.
 
 ## The solution: conftest.py
 
 `tests/conftest.py` is a special file that pytest **always loads before
 collecting or running any tests**. The conftest takes advantage of this
-guaranteed early execution to inject fake (`stub`) versions of both libraries
-into Python's module registry (`sys.modules`) before any test file is imported.
+guaranteed early execution to inject a fake (`stub`) version of `lgpio` into
+Python's module registry (`sys.modules`) before any test file is imported.
 
-Because the stubs are already in `sys.modules` when the test files are
-imported, statements like `import lgpio` and `import RPi.GPIO as GPIO` inside
-the source modules silently resolve to the stubs rather than looking for the
-real packages on disk.
+Because the stub is already in `sys.modules` when the test files are imported,
+the statement `import lgpio` inside the source modules silently resolves to the
+stub rather than looking for the real package on disk.
 
-On a Raspberry Pi where the real libraries are already installed and present in
-`sys.modules`, the `if "lgpio" not in sys.modules` / `if "RPi" not in
-sys.modules` guards at the bottom of conftest.py cause the stub injection to be
-skipped entirely, so the real hardware is used instead.
+On a Raspberry Pi where `lgpio` is already installed and present in
+`sys.modules`, the `if "lgpio" not in sys.modules` guard at the bottom of
+conftest.py causes the stub injection to be skipped entirely, so the real
+hardware is used instead.
 
-## What the stubs simulate
+## What the stub simulates
 
-Both stubs model the physical echo signal that an HC-SR04 sensor produces. The
+The stub models the physical echo signal that an HC-SR04 sensor produces. The
 key behaviour lives in `_EchoGen._cycle()`, which is an infinite generator
 producing the four-value sequence `[0, 1, 1, 0]` repeatedly:
 
@@ -50,19 +48,6 @@ the `echo_status_counter` reaches 1000, raising `SystemError("Echo pulse was
 not received")`. The test `test_raises_exception_no_pulse` deliberately passes
 `ECHO_PIN - 1` (pin 26) to exercise this path.
 
-### lgpio vs RPi.GPIO differences
-
-The two stubs mirror the different calling conventions of the two libraries:
-
-| Concern | lgpio stub (`_LgpioStub`) | RPi.GPIO stub (`_RPiGPIOStub`) |
-|---|---|---|
-| Pin claim | `gpio_claim_input(h, pin)` creates an `_EchoGen` keyed by `(handle, pin)` | `setup(pin, IN)` creates a `_GpioEchoGen` keyed by `pin` alone |
-| Read | `gpio_read(h, pin)` — handle + pin | `input(pin)` — pin only |
-| Cleanup | `gpio_free(h, pin)` / `gpiochip_close(h)` | `cleanup(pins)` |
-
-The `_RPiGPIOStub` also exposes the constants (`BCM`, `IN`, `OUT`, etc.) that
-test code references via `GPIO.BCM`, `GPIO.IN`, etc.
-
 ## Stub injection in detail
 
 At the bottom of conftest.py, after the classes are defined:
@@ -77,30 +62,16 @@ if "lgpio" not in sys.modules:
     sys.modules["lgpio"] = _mod             # register it — import lgpio now works
 ```
 
-For `RPi.GPIO` two entries are needed because `import RPi.GPIO as GPIO` causes
-Python to first resolve the `RPi` parent package and then look up `.GPIO` on it:
-
-```python
-_rpi_mod = types.ModuleType("RPi")
-_rpi_mod.GPIO = _gpio_mod          # parent package must have GPIO as an attribute
-sys.modules["RPi"] = _rpi_mod
-sys.modules["RPi.GPIO"] = _gpio_mod
-```
-
 ## Summary of execution order
 
 ```
 pytest starts
   └─ loads tests/conftest.py
-       ├─ defines _EchoGen, _LgpioStub, _GpioEchoGen, _RPiGPIOStub
-       ├─ injects stub into sys.modules["lgpio"]      (if not on Pi)
-       └─ injects stub into sys.modules["RPi"] and sys.modules["RPi.GPIO"]  (if not on Pi)
+       ├─ defines _EchoGen, _LgpioStub
+       └─ injects stub into sys.modules["lgpio"]      (if not on Pi)
 
   └─ collects tests/tests_usonic.py
        └─ import pinsource.usonic  →  import lgpio   ✓ (resolves to stub)
-
-  └─ collects tests/tests_usoniclegacy.py
-       └─ import pinsource.usoniclegacy  →  import RPi.GPIO  ✓ (resolves to stub)
 
   └─ collects tests/tests_pinsource.py
        └─ import pinsource.pinsource  →  import pinsource.usonic  ✓ (already cached)
