@@ -20,10 +20,12 @@ class _EchoGen:
     VALID_PINS = {27}  # matches ECHO_PIN constant used in tests
 
     def __init__(self, pin: int) -> None:
+        """Initialise the generator for the given pin number."""
         self._gen = self._cycle(pin in self.VALID_PINS)
 
     @staticmethod
     def _cycle(success: bool):
+        """Yield a repeating sequence of GPIO read values simulating an echo pulse."""
         if success:
             while True:
                 yield 0  # first-while body runs → sonar_signal_off set
@@ -35,11 +37,13 @@ class _EchoGen:
                 yield 0  # never goes high → SystemError after 1000 iters
 
     def read(self) -> int:
+        """Return the next GPIO read value in the cycle."""
         return next(self._gen)
 
 
 class _LgpioStub:
     def __init__(self) -> None:
+        """Initialise the stub with an empty echo generator registry."""
         self._gens: dict = {}
 
     def gpiochip_open(self, chip: int) -> int:

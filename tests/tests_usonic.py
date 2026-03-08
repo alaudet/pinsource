@@ -1,5 +1,6 @@
 import unittest
 import math
+from unittest.mock import patch
 from pinsource.usonic import Measurement
 
 TRIG_PIN = 17
@@ -9,6 +10,7 @@ GPIO_CHIP = 0
 
 class MeasurementTestCase(unittest.TestCase):
     def setUp(self):
+        """Create metric and imperial Measurement instances for use in tests."""
         self.metric_value_25 = Measurement(TRIG_PIN, ECHO_PIN, 25, "metric", gpio_chip=GPIO_CHIP)
         self.imperial_value = Measurement(TRIG_PIN, ECHO_PIN, 68, "imperial", gpio_chip=GPIO_CHIP)
         self.metric_value = Measurement(TRIG_PIN, ECHO_PIN, 20, "metric", gpio_chip=GPIO_CHIP)
@@ -29,7 +31,8 @@ class MeasurementTestCase(unittest.TestCase):
 
     def test_imperial_temperature_and_speed_of_sound(self):
         """Test that Fahrenheit is converted to Celsius internally without mutating
-        self.temperature, and that speed of sound is calculated correctly."""
+        self.temperature, that speed of sound is calculated correctly, and that
+        raw_distance returns a positive float."""
         value = self.imperial_value
         raw_measurement = value.raw_distance()
         converted_temp = (value.temperature - 32) * 0.5556
@@ -37,6 +40,7 @@ class MeasurementTestCase(unittest.TestCase):
         self.assertEqual(value.temperature, 68)
         self.assertEqual(value.unit, "imperial")
         self.assertIsInstance(raw_measurement, float)
+        self.assertGreater(raw_measurement, 0.0)
         self.assertAlmostEqual(speed_of_sound, 343.21555930656075)
 
     def test_imperial_measurements(self):
@@ -75,7 +79,8 @@ class MeasurementTestCase(unittest.TestCase):
         self.assertEqual(value.temperature, 68)
 
     def test_different_sample_size(self):
-        """Test that a user defined sample_size works correctly."""
+        """Test that a user defined sample_size works correctly and returns a
+        positive float."""
         value = self.imperial_value
         raw_measurement1 = value.raw_distance(sample_size=1)
         raw_measurement2 = value.raw_distance(sample_size=4)
@@ -83,9 +88,13 @@ class MeasurementTestCase(unittest.TestCase):
         self.assertIsInstance(raw_measurement1, float)
         self.assertIsInstance(raw_measurement2, float)
         self.assertIsInstance(raw_measurement3, float)
+        self.assertGreater(raw_measurement1, 0.0)
+        self.assertGreater(raw_measurement2, 0.0)
+        self.assertGreater(raw_measurement3, 0.0)
 
     def test_different_sample_wait(self):
-        """Test that a user defined sample_wait time works correctly."""
+        """Test that a user defined sample_wait time works correctly and returns a
+        positive float."""
         value = self.metric_value
         raw_measurement1 = value.raw_distance(sample_wait=0.3)
         raw_measurement2 = value.raw_distance(sample_wait=0.1)
@@ -95,9 +104,13 @@ class MeasurementTestCase(unittest.TestCase):
         self.assertIsInstance(raw_measurement2, float)
         self.assertIsInstance(raw_measurement3, float)
         self.assertIsInstance(raw_measurement4, float)
+        self.assertGreater(raw_measurement1, 0.0)
+        self.assertGreater(raw_measurement2, 0.0)
+        self.assertGreater(raw_measurement3, 0.0)
+        self.assertGreater(raw_measurement4, 0.0)
 
     def test_basic_distance(self):
-        """Test static method ensuring a float is returned with default,
+        """Test static method ensuring a positive float is returned with default,
         positive, and negative temps."""
         x = Measurement
         basic_reading = x.basic_distance(TRIG_PIN, ECHO_PIN)
@@ -108,6 +121,10 @@ class MeasurementTestCase(unittest.TestCase):
         self.assertIsInstance(basic_reading2, float)
         self.assertIsInstance(basic_reading3, float)
         self.assertIsInstance(basic_reading4, float)
+        self.assertGreater(basic_reading, 0.0)
+        self.assertGreater(basic_reading2, 0.0)
+        self.assertGreater(basic_reading3, 0.0)
+        self.assertGreater(basic_reading4, 0.0)
 
     def test_raises_exception_unit(self):
         """Test that a ValueError is raised if user passes invalid unit type."""
@@ -134,6 +151,15 @@ class MeasurementTestCase(unittest.TestCase):
         imperial_depth = value2.depth(raw_measurement, hole_depth_inches)
         self.assertAlmostEqual(imperial_depth, 9.137628357492481)
 
+    def test_depth_exceeds_container(self):
+        """Test that depth() returns a negative value when the reading exceeds
+        the container depth, documenting the expected behaviour."""
+        value = self.metric_value
+        self.assertLess(value.depth(50, 30), 0)
+
+        value2 = self.imperial_value
+        self.assertLess(value2.depth(50, 10), 0)
+
     def test_distance(self):
         """Test the distance measurement."""
         value = self.metric_value
@@ -144,6 +170,27 @@ class MeasurementTestCase(unittest.TestCase):
         value2 = self.imperial_value
         imperial_distance = value2.distance(raw_measurement)
         self.assertAlmostEqual(imperial_distance, 19.23037164250752)
+
+    def test_raw_distance_returns_median(self):
+        """Test that raw_distance returns the median of the sample, not the
+        first or last reading, by injecting deterministic time values."""
+        value = self.metric_value  # 20°C metric
+        speed_of_sound = 331.3 * math.sqrt(1 + 20 / 273.15)
+        factor = (speed_of_sound * 100) / 2
+
+        # Three samples with time_passed values 0.001, 0.003, 0.002.
+        # Sorted distances: [0.001*f, 0.002*f, 0.003*f]; median is 0.002*f.
+        # Each sample consumes 3 time.time() calls:
+        #   1. sonar_signal_off  2. echo_timeout base  3. sonar_signal_on
+        time_sequence = [
+            1.000, 1000.0, 1.001,   # sample 0: time_passed = 0.001
+            2.000, 1000.0, 2.003,   # sample 1: time_passed = 0.003
+            3.000, 1000.0, 3.002,   # sample 2: time_passed = 0.002
+        ]
+        with patch("time.time", side_effect=time_sequence):
+            result = value.raw_distance(sample_size=3)
+
+        self.assertAlmostEqual(result, 0.002 * factor)
 
     def test_cylinder_volume_side(self):
         """Test the volume of liquid in a cylinder resting on its side."""
@@ -160,6 +207,18 @@ class MeasurementTestCase(unittest.TestCase):
         radiusi = 18
         cylinder_volume_g = value2.cylinder_volume_side(depthi, heighti, radiusi)
         self.assertAlmostEqual(cylinder_volume_g, 55.28063419280857)
+
+    def test_cylinder_volume_side_boundary(self):
+        """Test cylinder_volume_side at the exact boundary values depth=0
+        and depth=diameter."""
+        value = self.metric_value
+        radius = 45
+        length = 120
+        # Empty container
+        self.assertAlmostEqual(value.cylinder_volume_side(0, length, radius), 0.0)
+        # Full container: volume = π * r^2 * length / 1000
+        full = math.pi * radius ** 2 * length / 1000
+        self.assertAlmostEqual(value.cylinder_volume_side(radius * 2, length, radius), full)
 
     def test_cylinder_volume_standing(self):
         """Test the volume of a liquid in a standing cylinder."""
@@ -215,6 +274,25 @@ class MeasurementTestCase(unittest.TestCase):
         e_cyl_vol_side_g = value2.elliptical_side_cylinder_volume(depth, height, width, length)
         self.assertAlmostEqual(e_cyl_vol_side_g, 305.05444525439634)
 
+    def test_elliptical_side_boundary(self):
+        """Test elliptical_side_cylinder_volume at the exact boundary values
+        depth=0 and depth=height."""
+        value = self.metric_value
+        height = 40
+        width = 30
+        length = 100
+        s_maj_a = width / 2
+        s_min_a = height / 2
+        # Empty container
+        self.assertAlmostEqual(
+            value.elliptical_side_cylinder_volume(0, height, width, length), 0.0
+        )
+        # Full container: volume = π * s_maj_a * s_min_a * length / 1000
+        full = math.pi * s_maj_a * s_min_a * length / 1000
+        self.assertAlmostEqual(
+            value.elliptical_side_cylinder_volume(height, height, width, length), full
+        )
+
     def test_raise_cylinder_v_side(self):
         """Test ValueError raised with impossible depth values."""
         value = self.metric_value
@@ -229,3 +307,11 @@ class MeasurementTestCase(unittest.TestCase):
 
         with self.assertRaises(ValueError):
             value.elliptical_side_cylinder_volume(-1, 80, 20, 120)
+
+    def test_gpio_chip_nonzero(self):
+        """Test that a non-default gpio_chip value is accepted and produces
+        a valid positive distance reading."""
+        value = Measurement(TRIG_PIN, ECHO_PIN, gpio_chip=1)
+        result = value.raw_distance()
+        self.assertIsInstance(result, float)
+        self.assertGreater(result, 0.0)

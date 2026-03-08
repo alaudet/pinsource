@@ -20,6 +20,19 @@ class Measurement(object):
     def __init__(
         self, trig_pin, echo_pin, temperature=20, unit="metric", gpio_chip=0
     ):
+        """Initialise the sensor with GPIO pin assignments and measurement parameters.
+
+        Args:
+            trig_pin: BCM GPIO pin number connected to the sensor TRIG line.
+            echo_pin: BCM GPIO pin number connected to the sensor ECHO line.
+            temperature: Ambient temperature used to adjust speed of sound.
+                         Degrees Celsius when unit='metric' (default 20),
+                         degrees Fahrenheit when unit='imperial' (default 68).
+            unit: Unit system for all measurements. 'metric' returns cm and
+                  litres; 'imperial' returns inches and gallons. Default 'metric'.
+            gpio_chip: lgpio GPIO chip number. Default 0, which corresponds to
+                       /dev/gpiochip0 on most Raspberry Pi models.
+        """
         self.trig_pin = trig_pin
         self.echo_pin = echo_pin
         self.temperature = temperature

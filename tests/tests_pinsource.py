@@ -51,5 +51,16 @@ class TestHCSR04Sensor(unittest.TestCase):
         self.assertEqual(output.strip(), expected_output.strip())
 
 
+    def test_get_args_custom_speed_and_samples(self):
+        """Test that custom --speed and --samples arguments are parsed correctly."""
+        args = ["-t", "17", "-e", "27", "-sp", "0.05", "-ss", "5"]
+        with patch("sys.argv", ["bin/hcsr04"] + args):
+            trig, echo, speed, samples = get_args()
+            self.assertEqual(trig, 17)
+            self.assertEqual(echo, 27)
+            self.assertEqual(speed, 0.05)
+            self.assertEqual(samples, 5)
+
+
 if __name__ == "__main__":
     unittest.main()
