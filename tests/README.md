@@ -6,7 +6,7 @@
 sudo apt install python3-pytest
 ```
 
-If running on a development system the tests will mock the lgpio or Rpi.GPIO modules
+If running on a development system the tests will mock the lgpio library.
 
 If running on a pi connected with hardware it will run the tests with the actual sensor.
 
@@ -14,7 +14,7 @@ Make sure to set your Trig and Echo pins accordingly. These tests use Trig 17 an
 
 ## Commands
 
-Run all tests (test files use `tests_*.py` naming, configured in `pyproject.toml`):
+Run all tests (test files use `tests_*.py` naming,):
 ```sh
 pytest tests/
 ```
