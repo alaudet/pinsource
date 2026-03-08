@@ -14,6 +14,12 @@ Pinsource also supports lgpio and is slated to work on Raspberry Pi 5, which is 
 
 This version also changes from the MIT License to the Apache 2.0 License.
 
+# Why not just use gpiozero?
+
+I love gpiozero.  It's a wonderful project and I am amazed how many sensors it can interact with. 
+
+My motivation for Pinsource (and its predecessor hcsr04sensor which I released in 2014) is to learn and  use in my own Raspi-Sump application (an application for monitoring water depth in any container).  It's more focused on the things I require. 
+
 # Quick install
 
 ## WARNING - This code is alpha and not yet suitable for important tasks
