@@ -3,8 +3,6 @@ sensor and a Raspberry Pi.  Imperial and Metric measurements are available"""
 
 # Al Audet
 # MIT License
-from __future__ import division
-
 import time
 import math
 import lgpio
