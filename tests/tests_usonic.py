@@ -171,9 +171,19 @@ class MeasurementTestCase(unittest.TestCase):
         imperial_distance = value2.distance(raw_measurement)
         self.assertAlmostEqual(imperial_distance, 19.23037164250752)
 
-    def test_raw_distance_returns_median(self):
+    @patch("pinsource.usonic.lgpio")
+    def test_raw_distance_returns_median(self, mock_lgpio):
         """Test that raw_distance returns the median of the sample, not the
         first or last reading, by injecting deterministic time values."""
+        mock_lgpio.gpiochip_open.return_value = 0
+        # Each sample needs gpio_read to return: 0 (enter first while), 1 (exit
+        # first while), 1 (enter second while), 0 (exit second while).
+        mock_lgpio.gpio_read.side_effect = [
+            0, 1, 1, 0,   # sample 0
+            0, 1, 1, 0,   # sample 1
+            0, 1, 1, 0,   # sample 2
+        ]
+
         value = self.metric_value  # 20°C metric
         speed_of_sound = 331.3 * math.sqrt(1 + 20 / 273.15)
         factor = (speed_of_sound * 100) / 2
@@ -308,10 +318,11 @@ class MeasurementTestCase(unittest.TestCase):
         with self.assertRaises(ValueError):
             value.elliptical_side_cylinder_volume(-1, 80, 20, 120)
 
-    def test_gpio_chip_nonzero(self):
-        """Test that a non-default gpio_chip value is accepted and produces
-        a valid positive distance reading."""
+    @patch("pinsource.usonic.lgpio")
+    def test_gpio_chip_nonzero(self, mock_lgpio):
+        """Test that a non-default gpio_chip value is passed to lgpio.gpiochip_open."""
+        mock_lgpio.gpiochip_open.return_value = 1
+        mock_lgpio.gpio_read.side_effect = [0, 1, 1, 0]   # one sample
         value = Measurement(TRIG_PIN, ECHO_PIN, gpio_chip=1)
-        result = value.raw_distance()
-        self.assertIsInstance(result, float)
-        self.assertGreater(result, 0.0)
+        value.raw_distance(sample_size=1)
+        mock_lgpio.gpiochip_open.assert_called_once_with(1)

@@ -1,5 +1,6 @@
 # project added
 todo
+tmp/
 
 # lgpio daemon notification pipes (runtime, created by lgpiod)
 .lgd-nfy*

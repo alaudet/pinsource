@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "pinsource"
-version = "0.0.4alpha"
+version = "0.0.4a1"
 description = "Module for accessing gpio pins on arm boards like Raspberry Pi"
 readme = "README.md"
 license = "Apache-2.0"
@@ -12,6 +12,7 @@ authors = [
     { name = "Al Audet", email = "alaudet@linuxnorth.org" }
 ]
 requires-python = ">=3.11"
+dependencies = []
 classifiers = [
     "Development Status :: 3 - Alpha",
     "Environment :: Console",
