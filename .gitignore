@@ -8,6 +8,9 @@ debian/python3-pinsource/
 *.buildinfo
 *.changes
 md5sums
+.pybuild/
+
+
 
 # lgpio daemon notification pipes (runtime, created by lgpiod)
 .lgd-nfy*
