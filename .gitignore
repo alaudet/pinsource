@@ -2,6 +2,13 @@
 todo
 tmp/
 
+# Debian package build artifacts
+debian/python3-pinsource/
+*.whl
+*.buildinfo
+*.changes
+md5sums
+
 # lgpio daemon notification pipes (runtime, created by lgpiod)
 .lgd-nfy*
 
