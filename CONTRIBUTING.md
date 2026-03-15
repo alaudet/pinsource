@@ -1,19 +1,21 @@
-# Contributing Guidelines for __pinsource__
+# Contributing Guidelines for pinsource
 
 Contributions are welcome.
 
-1) Please open an issue in the tracker to suggest a change or fix before issuing the pull request.  
+1. Please open an issue in the tracker to suggest a change or fix before issuing the pull request.
 
-2) All pull requests should be off of the `devel` branch and not off `main`.
+2. All pull requests should target the `devel` branch and not `main`.
 
-3) All code submitted must be your own or be allowable to re-distribute under the Apache2.0 license.  
+3. All code submitted must be your own or be allowable to redistribute under the Apache 2.0 License.
 
-4) Please reasonably follow PEP8 guidelines for your code.  For example, if you create a function, give it a docstring so others know what you are doing.  Add comments to make your code clearer to others reading it. If your code is a mess it will not be included.  
+4. Follow PEP 8 guidelines for code style. Follow PEP 257 for docstrings — add a docstring to every function so others understand its purpose. Add comments where the intent is not immediately obvious. Code that is difficult to read will not be accepted.
 
-5) I can't promise that all new features will be accepted.  However the Apache2.0 license allows/welcomes you to fork the code and release an altered version under any license that you like.  Please see the requirements under the Apache2.0 license when doing so.
+5. New functionality must include a unittest. All existing tests must pass before issuing a pull request. Run the test suite with `pytest tests/` and confirm a clean result. See `tests/README.md` for details.
 
-6) Make sure your changes work before issuing the pull request.  Adding a unittest is highly encouraged.  Make sure any current unittests pass.  See the README.md in /tests for info on running tests.
+6. New Python dependencies must be added to `debian/control` as well as the code. Contributions must not break the `.deb` build (`dpkg-buildpackage -us -uc -b`).
 
-7) If you want to contribute we have a Discord group for Raspi-Sump which includes a channel called `#code-discussion` and `#pinsource`.  It is not mandatory to join but highly encouraged and makes collaboration much easier.  Email alaudet@linuxnorth.org to request an invite link.
+7. I can't promise that all new features will be accepted. However, the Apache 2.0 license allows and welcomes you to fork the code and release an altered version under any compatible license. Please review the requirements of the Apache 2.0 license when doing so.
 
-8) You can use AI agents (such as Claude) as helpful assistants.  Just be honest about your usage. Don't submit code you don't understand or doesn't have a clear purpose.  If I can't understand what the code is doing or doesn't benefit the application, it will not be included.
+8. You may use AI assistants (such as Claude) to help write code. Be honest about your usage. Do not submit code you do not understand or that has no clear purpose. If the intent is unclear or it does not benefit the application, it will not be accepted.
+
+9. If you want to contribute, join the Discord group for Raspi-Sump — there are `#code-discussion` and `#pinsource` channels. It is not mandatory but makes collaboration much easier. Email [alaudet@linuxnorth.org](mailto:alaudet@linuxnorth.org) to request an invite link.
