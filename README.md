@@ -52,7 +52,7 @@ sudo apt update
 sudo apt install python3-pinsource
 ```
 
-Please report issues in the [issue tracker](https://github.com/alaudet/raspi-sump/issues).
+Please report issues in the [issue tracker](https://github.com/alaudet/pinsource/issues).
 ---
 
 ## Usage
