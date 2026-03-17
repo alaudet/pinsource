@@ -1,4 +1,4 @@
-# Pinsource
+# Pinsource Alpha Release
 
 Pinsource is a Python library for easily interacting with sensors on the Raspberry Pi. It is a fork and modernisation of [hcsr04sensor](https://github.com/alaudet/hcsr04sensor). Currently supports ultrasonic distance sensors; additional sensor types are planned.
 
@@ -32,12 +32,27 @@ The license has also changed from MIT to Apache 2.0.
 
 ## Install
 
-Pinsource is distributed as a Debian package. Download the latest `.deb` from the [releases page](https://github.com/alaudet/pinsource/releases) and install with:
+Alpha releases are available via the Linuxnorth APT repository. This is an
+unstable channel intended for testers — use on a production system at your own risk.
 
-```sh
-sudo apt install ./python3-pinsource_*.deb
+You should remove any previous versions of hcsr04sensor before doing this.  
+
+```bash
+# 1. Import the signing key
+curl -fsSL https://apt.linuxnorth.org/public_key.asc \
+  | sudo gpg --dearmor -o /usr/share/keyrings/linuxnorth-archive-keyring.gpg
+
+# 2. Add the repository
+echo "deb [signed-by=/usr/share/keyrings/linuxnorth-archive-keyring.gpg] \
+  https://apt.linuxnorth.org unstable main" \
+  | sudo tee /etc/apt/sources.list.d/linuxnorth.list
+
+# 3. Install
+sudo apt update
+sudo apt install python3-pinsource
 ```
 
+Please report issues in the [issue tracker](https://github.com/alaudet/raspi-sump/issues).
 ---
 
 ## Usage
