@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "pinsource"
-version = "0.0.4a1"
+version = "0.0.4rc1"
 description = "Module for accessing gpio pins on arm boards like Raspberry Pi"
 readme = "README.md"
 license = {text = "Apache-2.0"}
@@ -14,7 +14,7 @@ authors = [
 requires-python = ">=3.11"
 dependencies = []
 classifiers = [
-    "Development Status :: 3 - Alpha",
+    "Development Status :: 4 - Beta",
     "Environment :: Console",
     "Intended Audience :: End Users/Desktop",
     "Natural Language :: English",
@@ -30,7 +30,6 @@ Download = "https://github.com/alaudet/pinsource/releases"
 
 [project.scripts]
 pinsource = "pinsource.pinsource:main"
-pi5test = "pinsource.pi5test:main"
 
 [tool.setuptools.packages.find]
 include = ["pinsource*"]

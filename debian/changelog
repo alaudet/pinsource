@@ -1,3 +1,12 @@
+pinsource (0.0.4~rc1) unstable; urgency=medium
+
+  * Release candidate 1
+  * Remove pi5test.py temporary hardware test utility
+  * Add docs/install.md — installation and recipes guide
+  * Add .github/workflows/apt-repo.yml for automated APT publishing
+
+ -- Al Audet <alaudet@linuxnorth.org>  Mon, 23 Mar 2026 00:00:00 +0000
+
 pinsource (0.0.4~a1) unstable; urgency=medium
 
   * Initial deb packaging
