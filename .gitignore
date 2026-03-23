@@ -4,6 +4,8 @@ tmp/
 
 # Debian package build artifacts
 debian/python3-pinsource/
+debian/.debhelper/
+debian/files
 *.whl
 *.buildinfo
 *.changes

@@ -1,6 +1,0 @@
-pinsource (0.0.4~a1) unstable; urgency=medium
-
-  * Initial deb packaging
-  * lgpio-based HC-SR04 driver, compatible with Raspberry Pi 5
-
- -- Al Audet <alaudet@linuxnorth.org>  Mon, 09 Mar 2026 00:00:00 +0000
