@@ -1,2 +1,7 @@
 Changelog
 =========
+
+2026-03-26 Version 1.0
+
+First stable release of Pinsource
+Pinsource is a fork of the hcsr04sensor Pyhton library

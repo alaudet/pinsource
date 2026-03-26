@@ -32,11 +32,9 @@ curl -fsSL https://apt.linuxnorth.org/public_key.asc \
 
 ### 2. Add the repository
 
-> **Note:** Until version 1.0, packages are published to the `unstable` channel only.
-
 ```bash
 echo "deb [signed-by=/usr/share/keyrings/linuxnorth-archive-keyring.gpg] \
-  https://apt.linuxnorth.org unstable main" \
+  https://apt.linuxnorth.org trixie main" \
   | sudo tee /etc/apt/sources.list.d/linuxnorth.list
 ```
 
